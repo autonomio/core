@@ -1,5 +1,5 @@
 import spacy as sp
-from ascify import Ascify
+from .ascify import Ascify
 
 
 def vectorize_text(data, language='en', ascifying=True):
@@ -15,7 +15,11 @@ def vectorize_text(data, language='en', ascifying=True):
 
     '''
 
-    nlp = sp.load(language)
+    try:
+        nlp = sp.load(language)
+    except OSError:
+        print('TRY: "python -m spacy download en" from command line')
+
     nlp.parser.model  # to confirm that the parser loaded ok
 
     c = len(data)
@@ -28,8 +32,11 @@ def vectorize_text(data, language='en', ascifying=True):
             temp_string = Ascify(str(data[i:i+1])).ascify()
         else:
             temp_string = str(data[i:i+1])
+        try:
+            uni_string = unicode(temp_string)
+        except NameError:
+            uni_string = str(temp_string)
 
-        uni_string = unicode(temp_string)
         vec_obj = nlp(uni_string)
         vector = vec_obj.vector
         l.append(vector)

@@ -61,13 +61,15 @@ temp2 = temp2[:, 2:4]
 temp2 = pd.DataFrame(temp2)
 
 data('temp.x', 'file')
-
 temp2.to_csv('test_data.csv')
 data('test_data.csv', 'file', header=None)
-data('test_data.csv')
+data('test_data.csv', 'file')
 
 # 2) wrangler
+temp = data('random_tweets')
+temp = temp.head(100)
 
+temp.columns = [i.decode("utf-8") for i in list(temp.columns)]
 temp['datetime'] = temp['created_at']
 
 temp1 = wrangler(data=temp,
@@ -97,13 +99,14 @@ tr = train([1, 2, 3, 4, 5], 'neg', temp,
            flatten='cat_numeric',
            learning_rate=0.1)
 
-tr = train(1, 'quality_score', temp, flatten='median', lr_scheduler=True)
+#tr = train(1, 'quality_score', temp, flatten='median', lr_scheduler=True)
+
 tr = train(1, 'quality_score', temp, flatten=6, early_stop=['val_acc'])
 tr = train(1, 'quality_score', temp, flatten=.5, learning_rate=0.1)
 tr = train(1, 'quality_score', temp, flatten='mean', metrics='accuracy')
 
 tr = train('text', 'neg', temp, save_model='test_model', save_best=True)
-te = predictor(temp, 'test_model')
+# te = predictor(temp, 'test_model')
 
 tr = train(1, 'neg', temp, layers=1, validation=True)
 tr = train(1, 'neg', temp, validation=.6, shape_plot=True)
@@ -113,12 +116,16 @@ try:
 except:
     pass
 
+temp_employment = temp_employment.head(100)
+temp_employment.columns = [i.decode("utf-8") for i in list(temp_employment.columns)]
+
 train(temp_employment.MUU,
       epoch=1,
       batch_size=512,
       model='lstm',
       normalize_window=False,
       learning_rate=0.1)
+
 train(temp_employment.MUU,
       epoch=1,
       batch_size=512,
@@ -130,17 +137,12 @@ tr = train(['reach_score', 'influence_score'],
            temp,
            save_model='strings')
 
-train()
-train(model='lstm')
-
 # 4) predicton
-
 te = predictor(temp,
                'strings',
                interactive=True,
                interactive_x='user_followers',
                labels='handle')
-
 # 5) shapes
 
 l = ['funnel',
@@ -227,9 +229,9 @@ temp3 = word_filtering(temp.text[0], pos='', output=str)
 
 # 8) plots
 
-scatterz('influence_score', 'neg', temp, labels='handle')
-scatterz('influence_score', 'neg', temp,
-         labels='handle', yscale='log', xscale='log')
+#scatterz('influence_score', 'neg', temp, labels='handle')
+#scatterz('influence_score', 'neg', temp,
+#         labels='handle', yscale='log', xscale='log')
 
 x = train(2, 'Survived', temp_titanic, flatten='none', hyperscan=True)
 
